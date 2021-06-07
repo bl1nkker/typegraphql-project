@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { Field, ID, ObjectType, Root } from "type-graphql";
 import {Entity, PrimaryGeneratedColumn, Column, BaseEntity} from "typeorm";
 
 // Like models in MongoDB i think
@@ -31,7 +31,9 @@ export class User extends BaseEntity{
 
     // This prop will not be shown in the database
     @Field()
-    name: string
+    name(@Root() parent: User ): string{
+        return `${parent.firstName} ${parent.lastName}`
+    }
 
     // This prop will not be shown in the graphql
     @Column()
