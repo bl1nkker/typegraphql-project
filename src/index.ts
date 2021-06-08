@@ -13,6 +13,7 @@ import { redis } from './redis'
 import cors from 'cors'
 import { LoginResolver } from './modules/user/Login'
 import { GetUser } from './modules/user/GetUser'
+import { ConfirmUserResolver } from './modules/user/ConfirmUser'
 
 
 
@@ -24,7 +25,7 @@ const main = async() =>{
 
     // GraphQL Schema
     const schema = await buildSchema({
-        resolvers:[RegisterResolver, LoginResolver, GetUser]
+        resolvers:[RegisterResolver, LoginResolver, GetUser, ConfirmUserResolver]
     })
     // Connect to ApolloServer
     const apolloServer = new ApolloServer({

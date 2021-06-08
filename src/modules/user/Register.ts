@@ -1,9 +1,11 @@
 // User related thing
-
-import { Arg, Mutation, Query, Resolver } from 'type-graphql'
+import { Arg, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql'
 import bcrypt from 'bcryptjs'
 import { User } from '../../entity/User'
 import { RegisterInput } from './register/RegisterInput'
+import { isAuth } from '../middleware/isAuth'
+import { sendEmail } from '../utils/sendEmail'
+import { createConfirmationUrl } from '../utils/createConfimationUrl'
 
 // Decorator
 @Resolver()
@@ -11,6 +13,8 @@ export class RegisterResolver {
     // Here we define query decorator, and what it will return
     // name - changes the name of query, // description: adds description to docs // nullable: changes strict
     @Query (() => String, {name:'sayHello', description:'Say hello', nullable:true})
+    // Adding middleware to resolver
+    @UseMiddleware(isAuth)
     async sayHello(){
         return 'Hello!'
     }
@@ -40,6 +44,9 @@ export class RegisterResolver {
             email,
             password:hashedPassword
         }).save()
+
+        await sendEmail(email, createConfirmationUrl(user.id))
+
         return user
     }
 }
