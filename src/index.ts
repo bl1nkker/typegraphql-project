@@ -2,7 +2,6 @@ import 'reflect-metadata'
 
 import { ApolloServer } from 'apollo-server-express'
 import Express from 'express'
-import { buildSchema } from 'type-graphql'
 
 import { createConnection } from 'typeorm'
 
@@ -10,6 +9,7 @@ import session from 'express-session'
 import connectRedis from 'connect-redis'
 import { redis } from './redis'
 import cors from 'cors'
+import { createSchema } from './utils/createSchema'
 
 
 
@@ -20,16 +20,11 @@ const main = async() =>{
     const RedisStore = connectRedis(session)
 
     // GraphQL Schema
-    const schema = await buildSchema({
-        // resolvers:[RegisterResolver, LoginResolver, GetUser, ConfirmUserResolver]
-
-        // autoimport
-        resolvers: [__dirname + '/modules/**/*.ts']
-    })
+    const schema = await createSchema()
     // Connect to ApolloServer
     const apolloServer = new ApolloServer({
         schema,
-        context: ({ req }: any) => ({ req })
+        context: ({ req, res }: any) => ({ req, res })
     })
 
     // That is need for storing session in cookies
