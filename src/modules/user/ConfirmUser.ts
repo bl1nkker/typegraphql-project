@@ -1,6 +1,6 @@
 import { User } from './../../entity/User'
 import { Arg, Mutation, Resolver } from 'type-graphql'
-import { redis } from './../../redis'
+import { redis } from '../../redis'
 import { confirmUserPrefix } from '../constants/redisPrefixes'
 
 // Decorator

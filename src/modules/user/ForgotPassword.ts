@@ -1,6 +1,6 @@
 import { User } from './../../entity/User'
 import { Arg, Mutation, Resolver } from 'type-graphql'
-import { redis } from './../../redis'
+import { redis } from '../../redis'
 import { v4 } from 'uuid'
 import { sendEmail } from '../utils/sendEmail'
 import { forgotPasswordPrefix } from '../constants/redisPrefixes'

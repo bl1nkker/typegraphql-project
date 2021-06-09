@@ -1,6 +1,6 @@
 import { User } from './../../entity/User'
 import { Arg, Ctx, Mutation, Resolver } from 'type-graphql'
-import { redis } from './../../redis'
+import { redis } from '../../redis'
 import bcrypt from 'bcryptjs'
 import { forgotPasswordPrefix } from '../constants/redisPrefixes'
 import { ChangePasswordInput } from './changePassword/ChangePasswordInput'
