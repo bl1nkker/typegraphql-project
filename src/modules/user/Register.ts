@@ -1,11 +1,12 @@
 // User related thing
-import { Arg, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql'
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql'
 import bcrypt from 'bcryptjs'
 import { User } from '../../entity/User'
 import { RegisterInput } from './register/RegisterInput'
 import { isAuth } from '../middleware/isAuth'
 import { sendEmail } from '../utils/sendEmail'
 import { createConfirmationUrl } from '../utils/createConfimationUrl'
+import { MyContext } from 'src/types/MyContext'
 
 // Decorator
 @Resolver()
@@ -15,8 +16,11 @@ export class RegisterResolver {
     @Query (() => String, {name:'sayHello', description:'Say hello', nullable:true})
     // Adding middleware to resolver
     @UseMiddleware(isAuth)
-    async sayHello(){
-        return 'Hello!'
+    async sayHello(
+        @Ctx() ctx:MyContext
+    ){
+        const user = await User.findOne(ctx.req.session.userId)
+        return 'Hello!' + user!.firstName + user!.lastName
     }
 
     // Work with the @Field Decorator

@@ -14,13 +14,13 @@ export class LoginResolver {
         @Arg("email") email:string,
         @Arg("password") password:string,
         @Ctx() ctx: MyContext
-    ):Promise<User | string | null>{
+    ):Promise<User | null>{
         const user = await User.findOne({ where: { email } })
-        if (!user) return "No user with such email!"
+        if (!user) return null
 
         const isValidPassword = await bcrypt.compare(password, user.password)
-        if (!isValidPassword) return "Password do not match!"
-        if (!user.confirmed) return "Please, make sure you confirmed your email!"
+        if (!isValidPassword) return null
+        if (!user.confirmed) return null
 
         ctx.req.session!.userId = user.id
         return user
