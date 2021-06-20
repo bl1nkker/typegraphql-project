@@ -10,7 +10,6 @@ export class GetUser {
         if (!ctx.req.session.userId) return undefined
 
         const user = User.findOne(ctx.req.session.userId)
-        console.log(123)
         return user
     }
 }

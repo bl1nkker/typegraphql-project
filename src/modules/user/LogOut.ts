@@ -2,7 +2,7 @@ import { MyContext } from "src/types/MyContext";
 import { Ctx, Mutation, Resolver } from "type-graphql";
 
 @Resolver()
-export class LogOut {
+export class LogOutResolver{
   @Mutation(() => Boolean)
   async logOut(@Ctx() ctx: MyContext): Promise<boolean> {
       // Clean session
