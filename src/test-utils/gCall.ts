@@ -4,13 +4,14 @@ import { createSchema } from "./../utils/createSchema"
 
 interface Options {
     source: string,
-    variableValues?:Maybe<{[key: string]: any;}>
+    variableValues?:Maybe<{[key: string]: any;}>,
+    userId?: number
 }
 
 let schema: GraphQLSchema;
 
 // So here we pass resolver(Query or Mutation) and it's values
-export const gCall = async({ source, variableValues} : Options) =>{
+export const gCall = async({ source, variableValues, userId} : Options) =>{
     if (!schema){
         schema = await createSchema()
     }
@@ -21,6 +22,16 @@ export const gCall = async({ source, variableValues} : Options) =>{
         // Actually resolver, that we will call
         source,
         // Some variables
-        variableValues
+        variableValues,
+        contextValue:{
+            req:{
+                session:{
+                    userId
+                }
+            },
+            res:{
+                clearCookies: jest.fn()
+            }
+        }
     })
 }
