@@ -10,6 +10,7 @@ import connectRedis from 'connect-redis'
 import { redis } from './redis'
 import cors from 'cors'
 import { createSchema } from './utils/createSchema'
+import { graphqlUploadExpress } from 'graphql-upload'
 
 
 
@@ -24,7 +25,8 @@ const main = async() =>{
     // Connect to ApolloServer
     const apolloServer = new ApolloServer({
         schema,
-        context: ({ req, res }: any) => ({ req, res })
+        context: ({ req, res }: any) => ({ req, res }),
+        uploads:false
     })
 
     // That is need for storing session in cookies
@@ -52,7 +54,7 @@ const main = async() =>{
           maxAge: 1000 * 60 * 60 * 24 * 7 * 365, // 7 years
         },
       }));
-
+    app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }))
     apolloServer.applyMiddleware({ app })
     app.listen(4000, () => console.log('Server started at http://localhost:4000/graphql'))
 }
