@@ -1,4 +1,6 @@
 import { Request, Response } from 'express'
+import { createAuthorsLoader } from "../utils/authorsLoader";
+
 export interface MyContext {
     req: Request & {
       session: {
@@ -10,4 +12,5 @@ export interface MyContext {
         userId?: any;
       };
     };
+    authorsLoader: ReturnType<typeof createAuthorsLoader>;
   }

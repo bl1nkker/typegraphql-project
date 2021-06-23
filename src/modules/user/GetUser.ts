@@ -5,7 +5,8 @@ import { MyContext } from 'src/types/MyContext'
 // Decorator
 @Resolver()
 export class GetUser {
-    @Query (() => User, {nullable:true})
+    // max_complexity = 8, default_complexity = 1, so remaining complexity = 3
+    @Query (() => User, {nullable:true, complexity:5})
     async getUser(@Ctx() ctx: MyContext) : Promise<User | undefined>{
         if (!ctx.req.session.userId) return undefined
 

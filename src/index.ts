@@ -1,18 +1,20 @@
 import 'reflect-metadata'
-
 import { ApolloServer } from 'apollo-server-express'
 import Express from 'express'
-
-import { createConnection } from 'typeorm'
-
+import { createConnection, useContainer } from 'typeorm'
 import session from 'express-session'
 import connectRedis from 'connect-redis'
 import { redis } from './redis'
 import cors from 'cors'
+import * as typeorm from "typeorm";
 import { createSchema } from './utils/createSchema'
 import { graphqlUploadExpress } from 'graphql-upload'
+import queryComplexity, { fieldExtensionsEstimator, simpleEstimator } from 'graphql-query-complexity'
+import { Container } from 'typeorm-typedi-extensions'
+import { createAuthorsLoader } from './utils/authorsLoader'
 
-
+useContainer(Container);
+typeorm.useContainer(Container);
 
 const main = async() =>{
     // Read ormconfig.json and connect to database
@@ -25,8 +27,22 @@ const main = async() =>{
     // Connect to ApolloServer
     const apolloServer = new ApolloServer({
         schema,
-        context: ({ req, res }: any) => ({ req, res }),
-        uploads:false
+        context: ({ req, res }: any) => ({ req, res, authorsLoader: createAuthorsLoader() }),
+        uploads:false,
+        // This is against DDoS attacks i think
+        validationRules: [ queryComplexity({
+          maximumComplexity: 8,
+          variables:{},
+          onComplete: (complexity: number) => {console.log('Query Complexity:', complexity);},
+          estimators: [
+            // Using fieldExtensionsEstimator is mandatory to make it work with type-graphql.
+            fieldExtensionsEstimator(),
+            // Add more estimators here...
+            // This will assign each field a complexity of 1
+            // if no other estimator returned a value.
+            simpleEstimator({ defaultComplexity: 1 }),
+          ]
+        }) ]
     })
 
     // That is need for storing session in cookies

@@ -25,7 +25,9 @@ export class User extends BaseEntity{
     lastName: string;
 
     // unique:true - Users can't pass the same emails
-    @Field()
+    // complexity:3 - here we can control field's complexity. You can increase it when field takes too much
+    // work with db
+    @Field({complexity:3})
     @Column("text", { unique:true })
     email: string;
 
